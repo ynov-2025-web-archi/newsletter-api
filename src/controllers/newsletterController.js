@@ -1,4 +1,5 @@
 const NewsletterSubscription = require('../models/NewsletterSubscription');
+const { createClient } = require('redis');
 
 // Subscribe to newsletter
 const subscribe = async (req, res) => {
@@ -32,6 +33,19 @@ const subscribe = async (req, res) => {
       email,
       preferences: preferences || {}
     });
+
+    // inSTantiate Redis client
+    const publisher = createClient({
+      url: process.env.REDIS_URL
+    })
+
+    // Connect to Redis
+    await publisher.connect();
+    
+    // Publish subscription event to Redis
+    await publisher.publish('newsletter:subscribe', JSON.stringify({
+      email: subscription.email,
+    }));
 
     await subscription.save();
 

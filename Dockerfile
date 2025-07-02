@@ -16,6 +16,7 @@ COPY . .
 FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
+ENV REDIS_URL=redis://redis:6379
 ENV MONGODB_URI=mongodb://localhost:27017/ecommerce_newsletter
 COPY --from=builder /app/src ./src
 COPY --from=builder /app/package.json ./package.json
